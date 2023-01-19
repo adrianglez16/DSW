@@ -7,17 +7,9 @@
     <title>Document</title>
 </head>
 <body>
-    <h2>Fecha</h2>
-<?php
-// echo "$day $month $year";
+    
+<img src="{{asset('images/404.jpg')}}" alt="Error 404">
 
 
-$fechas = array();
-
-
-$fecha = compact('day', 'month', 'year', $fechas);
-print_r($fecha);
-
-?>
 </body>
 </html>
