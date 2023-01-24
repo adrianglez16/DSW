@@ -58,9 +58,17 @@ Route::match(['get', 'post'], '/rutikele', function ($apellido = "glez") {
 
 // Crea una ruta que compruebe que un parámetro está formado sólo por números.
 
+Route::get('/user/{id}', function ($id) {
+echo 'BUENAS';
+})->where('id', '[0-9]+');
 
 
 //Crea una ruta con dos parámetros que compruebe que el primero está formado sólo por letras y el segundo sólo por números.
+
+Route::get('/user/{id}/{name}', function ($id, $name) {
+echo 'TENGO NUMEROS Y LETRAS';
+})->where(['id' => '[0-9]+', 'name' => '[a-z]+']);
+
 
 // 2) Utiliza el helper env para que cuando se acceda a la ruta /host nos devuelva la dirección IP donde se encuentra la base de datos de nuestro proyecto.
 
@@ -88,12 +96,8 @@ Route::get('/fecha1', function () {
     return view('fecha')->with('day', date("d"))->with('month', date("F"))->with('year', date("Y"));
 });
 
-// Route::view('/image', '404', function (){
-//     $url = asset('images/404.webp');
-//     return $url;
-// });
-
 Route::view('/image', '404');
+
 
 
 require __DIR__.'/auth.php';
