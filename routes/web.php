@@ -35,6 +35,9 @@ Route::get('/community', [App\Http\Controllers\CommunityLinkController::class, '
 Route::post('/community', [App\Http\Controllers\CommunityLinkController::class, 'store'])
 ->middleware(['auth', 'verified'])->name('community');;
 
+Route::get('/Respuesta', function () {
+    return response('Respuesta', 200);
+});
 
 Route::get('/error', function () {
     return response('Error', 404);
