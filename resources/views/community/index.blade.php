@@ -8,6 +8,11 @@
             <h1>Community</h1>
             @foreach ($links as $link)
             <li>
+
+                <span class="label label-default" style="background: {{ $link->channel->color }}">
+                    {{ $link->channel->title }}
+                </span>
+
                 <a href="{{$link->link}}" target="_blank">
                     {{$link->title}}
                 </a>
