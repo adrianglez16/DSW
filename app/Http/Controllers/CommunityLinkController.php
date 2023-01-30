@@ -17,7 +17,7 @@ class CommunityLinkController extends Controller
     public function index()
     {
 
-        $links = CommunityLink::paginate(25);
+        $links = CommunityLink::where('approved' ,1)->paginate(25);
         $channels = Channel::orderBy('title', 'asc')->get();
 
 
@@ -49,10 +49,22 @@ class CommunityLinkController extends Controller
 
         ]);
 
-        request()->merge(['user_id' => Auth::id(), ]);
+        $approved = Auth::user()->trusted ? true : false;
+
+        request()->merge(['user_id' => Auth::id(), 'approved'=>$approved]);
         CommunityLink::create($request->all());
-        return back();
+
+        if ($approved == true) {
+
+            return back()->with('success', 'Item created successfully!');
+        } else {
+            return redirect()->route('community')
+                ->with('error', "You have no permission for this page!");
+        }
+        
+
     }
+
 
     /**
      * Display the specified resource.
