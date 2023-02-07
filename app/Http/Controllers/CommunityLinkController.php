@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CommynityLinkForm;
 use App\Models\Channel;
 use App\Models\CommunityLink;
 use Illuminate\Http\Request;
@@ -17,7 +18,9 @@ class CommunityLinkController extends Controller
     public function index()
     {
 
-        $links = CommunityLink::where('approved' ,1)->paginate(25);
+        //El método latest ordena por última fecha de creación, no de actualización. Por eso le hemos pasado el argumento updated_at.
+        $links = CommunityLink::where('approved', true)->latest('updated_at')->paginate(25);
+
         $channels = Channel::orderBy('title', 'asc')->get();
 
 
@@ -40,29 +43,34 @@ class CommunityLinkController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CommynityLinkForm $request)
     {
         $this->validate($request, [
             'title' => 'required',
-            'link' => 'required|active_url|unique:community_links',
+            'link' => 'required|active_url',
             'channel_id' => 'required|exists:channels,id'
-
         ]);
-
-        $approved = Auth::user()->trusted ? true : false;
-
-        request()->merge(['user_id' => Auth::id(), 'approved'=>$approved]);
-        CommunityLink::create($request->all());
-
-        if ($approved == true) {
-
-            return back()->with('success', 'Item created successfully!');
-        } else {
-            return redirect()->route('community')
-                ->with('error', "You have no permission for this page!");
-        }
         
 
+        $approved = Auth::user()->trusted ? true : false;
+        $request->merge(['user_id' => Auth::id(), 'approved' => $approved]);
+        
+        if ($approved) {
+
+            if (CommunityLink::hasAlreadyBeenSubmitted($request->link)) {
+
+
+                return back()->with('success', 'Link update successfully!');
+            } else {
+
+                CommunityLink::create($request->all());
+
+                return back()->with('success', 'Link created successfully!');
+            }
+        } else {
+
+            return redirect()->route('community')->with('error', "You have no permission for this page!");
+        }
     }
 
 
