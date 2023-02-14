@@ -9,7 +9,7 @@
             <a href="/community">
                 <h1>Community</h1>
             </a>
-           <h5> {{$links[0]->channel->title}}</h5>
+           <!-- <h5> {{$links[0]->channel->title}}</h5> -->
 
 
             @include('partials.list-link')
