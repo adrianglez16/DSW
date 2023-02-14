@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CommynityLinkForm;
 use App\Models\Channel;
 use App\Models\CommunityLink;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,16 +16,23 @@ class CommunityLinkController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Channel $channel = null)
     {
-
-        //El método latest ordena por última fecha de creación, no de actualización. Por eso le hemos pasado el argumento updated_at.
-        $links = CommunityLink::where('approved', true)->latest('updated_at')->paginate(25);
-
+        // dd($channel);
+        // channels ordenados por title de manera ascendente
         $channels = Channel::orderBy('title', 'asc')->get();
 
+        // si hay un 'channel', es decir si hay un slug en la url
+        if ($channel) {
+            //El método latest ordena por última fecha de creación, no de actualización. Por eso le hemos pasado el argumento updated_at.
+            $links = $channel->communitylinks()->where('approved', true)->latest('updated_at')->paginate(25);
 
-        return view('community/index', compact('links', 'channels'));
+            return view('community/index', compact('links', 'channels'));
+        } else {
+            $links = CommunityLink::where('approved', true)->latest('updated_at')->paginate(25);
+
+            return view('community/index', compact('links', 'channels'));
+        }
     }
 
     /**
@@ -50,26 +58,29 @@ class CommunityLinkController extends Controller
             'link' => 'required|active_url',
             'channel_id' => 'required|exists:channels,id'
         ]);
-        
 
-        $approved = Auth::user()->trusted ? true : false;
-        $request->merge(['user_id' => Auth::id(), 'approved' => $approved]);
-        
-        if ($approved) {
+        $usuario = new User();
 
-            if (CommunityLink::hasAlreadyBeenSubmitted($request->link)) {
+        $request->merge(['user_id' => Auth::id(), 'approved' => $usuario->isTrusted()]);
 
+        $link = new CommunityLink();
+        $link->user_id = Auth::id();
 
-                return back()->with('success', 'Link update successfully!');
-            } else {
+        // si existe el link, muestra mensaje de info
+        if ($link->hasAlreadyBeenSubmitted($request->link)) {
 
-                CommunityLink::create($request->all());
-
-                return back()->with('success', 'Link created successfully!');
-            }
+            return back()->with('info', 'You added new items, follow next step!');
         } else {
+            // sino existe lo 'crea'
+            CommunityLink::create($request->all());
 
-            return redirect()->route('community')->with('error', "You have no permission for this page!");
+            if ($usuario->isTrusted()) {
+                // si el usuario está trusted realmente lo crea
+                return back()->with('success', 'Link created successfully!');
+            } else {
+                // sino está trusted no lo crea
+                return back()->with('error', "You have no permission for this page!");
+            }
         }
     }
 

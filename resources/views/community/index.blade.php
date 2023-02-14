@@ -1,4 +1,3 @@
-
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
 @extends('layouts.app')
 @section('content')
@@ -7,10 +6,13 @@
 <div class="container">
     <div class="row">
         <div class="col-md-8">
-            <h1>Community</h1>
-            
+            <a href="/community">
+                <h1>Community</h1>
+            </a>
+           <h5> {{$links[0]->channel->title}}</h5>
+
+
             @include('partials.list-link')
-           
 
         </div>
         <div class="col-md-4">
@@ -27,7 +29,7 @@
     </div>
     {{$links->links()}}
 
-   
+
 </div>
 
 @stop

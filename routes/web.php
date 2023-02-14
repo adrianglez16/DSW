@@ -44,6 +44,9 @@ Route::get('/error', function () {
 });
  
 
+Route::get('community/{channel}', [App\Http\Controllers\CommunityLinkController::class, 'index']);
+
+
 
 
 require __DIR__.'/auth.php';

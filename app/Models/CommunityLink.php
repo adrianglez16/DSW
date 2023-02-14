@@ -21,12 +21,13 @@ class CommunityLink extends Model
 
     public function channel()
     {
-        return $this->belongsTo(Channel::class, 'channel_id');
+        return $this->belongsTo(Channel::class);
     }
 
-
-    protected static function hasAlreadyBeenSubmitted($link)
+    // comprueba si un link existe, si existe actualiza el timestamp del link.
+    public function hasAlreadyBeenSubmitted($link)
     {
+        
         if ($existing = static::where('link', $link)->first()) {
             $existing->touch();
             $existing->save();
@@ -34,4 +35,5 @@ class CommunityLink extends Model
         }
         return false;
     }
+
 }
