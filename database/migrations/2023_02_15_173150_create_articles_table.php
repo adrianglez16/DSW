@@ -15,10 +15,9 @@ return new class extends Migration
     {
         Schema::create('articles', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->unsignedBigInteger('writer_id'); //Foránea
+            $table->string('title');             
+            $table->unsignedBigInteger('writer_id'); //Foránea             
             $table->foreign('writer_id')->references('id')->on('writers')->onDelete('cascade'); //Si borramos un escritor se borrar todos sus artículos
-
             $table->timestamps();
         });
     }
