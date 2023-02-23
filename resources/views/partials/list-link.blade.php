@@ -4,8 +4,10 @@
 
 @foreach ($links as $link)
 <li>
-
-    <span  class="label label-default" style="background: {{ $link->channel->color }}">
+    <button type="button" class="btn btn-outline-success btn-sm">
+        {{$link->users()->count()}}
+    </button>
+    <span class="label label-default" style="background: {{ $link->channel->color }}">
         {{ $link->channel->title }}
     </span>
 

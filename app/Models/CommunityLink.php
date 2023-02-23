@@ -24,6 +24,11 @@ class CommunityLink extends Model
         return $this->belongsTo(Channel::class);
     }
 
+    public function users()
+    {
+    return $this->belongsToMany(User::class, 'community_link_users');
+    }
+
     // comprueba si un link existe, si existe actualiza el timestamp del link.
     public function hasAlreadyBeenSubmitted($link)
     {
