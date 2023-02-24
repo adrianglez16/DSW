@@ -8,7 +8,6 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable implements MustVerifyEmail
@@ -48,14 +47,17 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function isTrusted()
     {
-        $approved = Auth::user()->trusted ? true : false;
 
-        return $approved;
+        return $this->trusted ? true : false;
     }
 
-
-    public function profile()
+    public function votes()
     {
-        return $this->hasOne(Profile::class);
+        return $this->belongsToMany(CommunityLink::class)->withTimestamps();
+    }
+
+    public function votedFor(CommunityLink $link)
+    {
+        return $this->votes->contains($link);
     }
 }

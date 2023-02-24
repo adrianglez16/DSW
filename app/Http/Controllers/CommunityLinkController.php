@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CommynityLinkForm;
+use App\Http\Requests\CommunityLinkForm;
 use App\Models\Channel;
 use App\Models\CommunityLink;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -51,7 +50,7 @@ class CommunityLinkController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(CommynityLinkForm $request)
+    public function store(CommunityLinkForm $request)
     {
         $this->validate($request, [
             'title' => 'required',
@@ -59,9 +58,9 @@ class CommunityLinkController extends Controller
             'channel_id' => 'required|exists:channels,id'
         ]);
 
-        $usuario = new User();
+        $usu = Auth::users()->isTrusted();
 
-        $request->merge(['user_id' => Auth::id(), 'approved' => $usuario->isTrusted()]);
+        $request->merge(['user_id' => Auth::id(), 'approved' => $usu]);
 
         $link = new CommunityLink();
         $link->user_id = Auth::id();
@@ -74,7 +73,7 @@ class CommunityLinkController extends Controller
             // sino existe lo 'crea'
             CommunityLink::create($request->all());
 
-            if ($usuario->isTrusted()) {
+            if ($usu) {
                 // si el usuario está trusted realmente lo crea
                 return back()->with('success', 'Link created successfully!');
             } else {

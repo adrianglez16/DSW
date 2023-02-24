@@ -21,12 +21,12 @@ class CommunityLink extends Model
 
     public function channel()
     {
-        return $this->belongsTo(Channel::class);
+        return $this->belongsTo(Channel::class, 'channel_id');
     }
 
     public function users()
     {
-    return $this->belongsToMany(User::class, 'community_link_users');
+    return $this->belongsToMany(User::class, 'community_link_user');
     }
 
     // comprueba si un link existe, si existe actualiza el timestamp del link.
