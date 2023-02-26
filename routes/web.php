@@ -45,9 +45,10 @@ Route::get('/error', function () {
 });
 
 
-Route::get('community/{channel}', [App\Http\Controllers\CommunityLinkController::class, 'index'])->middleware(['auth', 'verified'])->name('community');
+Route::get('community/{channel?}/{popular?}', [App\Http\Controllers\CommunityLinkController::class, 'index'])->middleware(['auth', 'verified'])->name('community');
 
 Route::post('/community/votes/{link}', [App\Http\Controllers\CommunityLinkUserController::class, 'store'])->middleware(['auth', 'verified'])->name('community');
+
 
 // Route::get('/consultas', function () {
 //     return DB::table('users')->where('id',3)->delete();

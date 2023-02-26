@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CommunityLinkForm;
 use App\Models\Channel;
 use App\Models\CommunityLink;
+use App\Queries\CommunityLinksQuery;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,21 +18,27 @@ class CommunityLinkController extends Controller
      */
     public function index(Channel $channel = null)
     {
-        // dd($channel);
         // channels ordenados por title de manera ascendente
         $channels = Channel::orderBy('title', 'asc')->get();
 
-        // si hay un 'channel', es decir si hay un slug en la url
+        $query = new CommunityLinksQuery;
+
         if ($channel) {
-            //El método latest ordena por última fecha de creación, no de actualización. Por eso le hemos pasado el argumento updated_at.
-            $links = $channel->communitylinks()->where('approved', true)->latest('updated_at')->paginate(25);
 
-            return view('community/index', compact('links', 'channels'));
+            if (request()->exists('popular')) {
+
+                $links = $query->getMostPopularAndChannel($channel);
+            } else {
+                $links = $query->getByChannel($channel);
+            }
+        } else  if (request()->exists('popular')) {
+
+            $links = $query->getMostPopular();
         } else {
-            $links = CommunityLink::where('approved', true)->latest('updated_at')->paginate(25);
-
-            return view('community/index', compact('links', 'channels'));
+            $links = $query->getAll();
         }
+
+        return view('community/index', compact('links', 'channels'));
     }
 
     /**
@@ -58,7 +65,7 @@ class CommunityLinkController extends Controller
             'channel_id' => 'required|exists:channels,id'
         ]);
 
-        $usu = Auth::users()->isTrusted();
+        $usu = Auth::user()->trusted ? true : false;
 
         $request->merge(['user_id' => Auth::id(), 'approved' => $usu]);
 
