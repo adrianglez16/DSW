@@ -23,18 +23,22 @@ class CommunityLinkController extends Controller
 
         $query = new CommunityLinksQuery;
 
+        // si hay un channel 
         if ($channel) {
-
+            // y ademas existe el parametro popular, nos muestra los links más populares de ese channel
             if (request()->exists('popular')) {
 
                 $links = $query->getMostPopularAndChannel($channel);
+                // y sino existe el parametro popular, nos muestra los links de ese canal más recientes
             } else {
                 $links = $query->getByChannel($channel);
             }
+            // sino existe el parametro channel (sino estamos dentro de ningún canal en concreto), pero existe el parametro popular
         } else  if (request()->exists('popular')) {
-
+            // nos mostrará los links más populares de manera general
             $links = $query->getMostPopular();
         } else {
+            // sino existe el parametro popular ni el channel, nos mostrará todos los links
             $links = $query->getAll();
         }
 

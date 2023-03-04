@@ -1,15 +1,21 @@
 @if (count($links) == 0)
 <h5> No contributions yet </h5>
 @endif
+
+
 {{ $links->appends($_GET)->links() }}
+
 <ul class="nav">
-        <li class="nav-item">
-            <a class="nav-link {{request()->exists('popular') ? '' : 'disabled' }}" href="{{request()->url()}}">Most recent</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link {{request()->exists('popular') ? 'disabled' : '' }}" href="?popular">Most popular</a>
-        </li>
-    </ul>
+    <li class="nav-item">
+        {{--Si existe el parametro popular el link permanecerá y sino estará disabled--}}
+        <a class="nav-link {{request()->exists('popular') ? '' : 'disabled' }}" href="{{request()->url()}}">Most recent</a>
+    </li>
+    <li class="nav-item">
+    {{--Si existe el parametro popular el link no permenecerá y sino estará activado. Además en el href se añadirá el parametro ?popular.--}}
+
+        <a class="nav-link {{request()->exists('popular') ? 'disabled' : '' }}" href="?popular">Most popular</a>
+    </li>
+</ul>
 
 
 @foreach ($links as $link)
